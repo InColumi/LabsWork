@@ -190,16 +190,63 @@ void Generator(int countStores)
 	}
 }
 
-void Laba1()
+void Initialization(Store& store)
 {
-	Store store;
 	store.InputFromConsole();
+}
+
+void ShowStoreToConsole(Store& store)
+{
 	store.ShowNames();
 	store.ShowValueInfo();
 	cout << "Всего продано книг: " << store.GetAmountBooks();
-	cout << "\nБольше всего продано "; 
+	cout << "\nБольше всего продано ";
 	store.ShowNameCategoriesByIndex(store.GetIndexMaxAmountBooks());
 	cout << '\n';
+}
+
+void Laba1()
+{
+	Store store;
+	Initialization(store);
+	ShowStoreToConsole(store);
+}
+
+int ReturnIndexMaxByAmount(int* arr, int size)
+{
+	int max = arr[0];
+	int index = 0;
+	for(int i = 1; i < size; i++)
+	{
+		if(max <arr[i])
+		{
+			max = arr[i];
+			index = i;
+		}
+	}
+	return index;
+}
+
+void Laba2()
+{
+	int countStores = 2;
+	Store* stores = new Store[countStores];
+	int* amountsBooks = new int[countStores];
+	for(int i = 0; i < countStores; i++)
+	{
+		Initialization(stores[i]);
+		amountsBooks[i] = stores[i].GetAmountBooks();
+		cout << "------------------------------------------------------------------------\n";
+	}
+	system("cls");
+	for(int i = 0; i < countStores; i++)
+	{
+		ShowStoreToConsole(stores[i]);
+		cout << "------------------------------------------------------------------------\n";
+	}
+	int index = ReturnIndexMaxByAmount(amountsBooks, countStores);
+	cout << "Больше всего продал: \n";
+	ShowStoreToConsole(stores[index]);
 }
 
 int main()
@@ -207,7 +254,8 @@ int main()
 	system("chcp 1251"); // переходим в консоли на русский язык
 	system("cls");
 	setlocale(LC_ALL, "Russian");
-	Laba1();
+	//Laba1();
+	Laba2();
 	//Generator(1);
 	
 	return 0;
