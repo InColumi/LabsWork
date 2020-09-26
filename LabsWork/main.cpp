@@ -345,7 +345,9 @@ void SortStoreByNubmerColum(Store* stores, int size, int column, bool inAscendin
 
 void Laba3()
 {
-	int countStores = 3;
+	cout << "Введите кол-во магазинов: ";
+	int countStores;
+	cin >> countStores;
 	Store* stores = new Store[countStores];
 
 	for(int i = 0; i < countStores; i++)
@@ -368,6 +370,66 @@ void Laba3()
 	ShowStoreInTable(stores, countStores);
 }
 
+void Laba4()
+{
+	cout << "Введите кол-во магазинов: ";
+	int countStores;
+	cin >> countStores;
+	Store* stores = new Store[countStores];
+
+	for(int i = 0; i < countStores; i++)
+	{
+		Initialization(stores[i]);
+		cout << "------------------------------------------------------------------------\n";
+	}
+	system("cls");
+	ShowStoreInTable(stores, countStores);
+
+	bool isNextCommand = true;
+	while(isNextCommand)
+	{
+		cout << "Введите номер столбца для сортировки: ";
+		int numberOfColumn;
+		cin >> numberOfColumn;
+		if(numberOfColumn < 0 || numberOfColumn > 4)
+		{
+			cout << "Вы ввели плохой номер столбца\n";
+			exit(0);
+		}
+		SortStoreByNubmerColum(stores, countStores, numberOfColumn);
+		system("cls");
+		ShowStoreInTable(stores, countStores);
+		bool isCorrectCommand = false;
+		while(isCorrectCommand == false)
+		{
+			cout << "Введите Y, если хотите продолжыть.\n";
+			cout << "Введите N, если хотите выйти из програмы.\n";
+			char command;
+			cin >> command;
+
+			switch(command)
+			{
+				case 'Y':
+				{
+					isCorrectCommand = true;
+					system("cls");
+					break;
+				}
+				case 'N':
+				{
+					cout << "Программа завершена пользователем\n";
+					isCorrectCommand = true;
+					isNextCommand = false;
+					break;
+				}
+				default:
+					cout << "Я не знаю такой команды, попробуйте еще.";
+					break;
+			}
+		}
+	}
+}
+
 int main()
 {
 	system("chcp 1251"); // переходим в консоли на русский язык
@@ -375,7 +437,8 @@ int main()
 	setlocale(LC_ALL, "Russian");
 	//Laba1();
 	//Laba2();
-	Laba3();
+	//Laba3();
+	Laba4();
 	//Generator(1);
 	
 	return 0;
