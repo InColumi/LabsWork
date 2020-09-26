@@ -10,10 +10,111 @@ struct Store
 {
 	public:
 	char Name[17];
-	int CountArtBooks;
-	int CountSportBooks;
-	int CountEducationBooks;
-	int CountEntertainingBooks;
+	private:
+	int _countCategories = 4;
+	int _amountBooks;
+	int* _categories = new int[_countCategories];
+	
+	void SetAmountBooks()
+	{
+		_amountBooks = 0;
+		for(int i = 0; i < _countCategories; i++)
+		{
+			_amountBooks += _categories[i];
+		}
+	}
+
+	public:
+	int GetIndexMaxAmountBooks()
+	{
+		int max = _categories[0];
+		int amountBooks = 0;
+		int indexMax = 0;
+		for(int i = 1; i < _countCategories; i++)
+		{
+			amountBooks = _categories[i];
+			if(amountBooks > max)
+			{
+				max = amountBooks;
+				indexMax = i;
+			}
+		}
+		return indexMax;
+	}
+
+	void ShowNameCategoriesByIndex(int index)
+	{
+		
+		switch(index)
+		{
+			case 0:
+			{
+				char name[14] = { 'Х', 'у', 'д', 'о', 'ж', 'е', 'с', 'т', 'в', 'е', 'н', 'н', 'а', 'я' };
+				for(int i = 0; i < 14; i++)
+				{
+					cout << name[i];
+				}
+				break;
+			}
+				
+			case 1:
+			{
+				char name[10] = { 'С', 'п', 'о', 'р', 'т', 'и', 'в', 'н', 'а', 'я' };
+				for(int i = 0; i < 10; i++)
+				{
+					cout << name[i];
+				}
+				break;
+			}
+				
+			case 2:
+			{
+				char name[9] = { 'О', 'б', 'у', 'ч', 'а', 'ю', 'щ', 'а', 'я' };
+				for(int i = 0; i < 9; i++)
+				{
+					cout << name[i];
+				}
+				break;
+			}
+				
+			case 3:
+			{
+				char name[15] = { 'Р', 'а', 'з', 'в', 'л', 'е', 'к', 'а', 'т', 'е', 'л', 'ь', 'н', 'а', 'я' };
+				for(int i = 0; i < 15; i++)
+				{
+					cout << name[i];
+				}
+				break;
+			}
+
+		}
+
+	}
+
+	void SetArtBooks(int amount)
+	{
+		_categories[0] = amount;
+	}
+
+	void SetSportBooks(int amount)
+	{
+		_categories[1] = amount;
+	}
+
+	void SetEducationBooks(int amount)
+	{
+		_categories[2] = amount;
+	}
+
+	void SetEntertainingBooks(int amount)
+	{
+		_categories[3] = amount;
+	}
+
+	int GetAmountBooks()
+	{
+		return _amountBooks;
+	}
 
 	void ShowNames()
 	{
@@ -22,30 +123,37 @@ struct Store
 
 	void ShowValueInfo()
 	{
-		printf("%-17s\t%-13d\t%-10d\t%-9d\t%-17d\n", Name, CountArtBooks, CountSportBooks, CountEducationBooks, CountEntertainingBooks);
+		printf("%-17s\t%-13d\t%-10d\t%-9d\t%-17d\n", Name, _categories[0], _categories[1], _categories[2], _categories[3]);
 	}
 
 	void InputFromConsole()
 	{
+		int inputUser;
 		cout << "Введите название книжного магазина: ";
 		cin >> Name;
 		cout << "Введите кол-во проданных художественных книг: ";
-		cin >> CountArtBooks;
+		cin >> inputUser;
+		SetArtBooks(inputUser);
 		cout << "Введите кол-во проданных спортивных книг: ";
-		cin >> CountSportBooks;
+		cin >> inputUser;
+		SetSportBooks(inputUser);
 		cout << "Введите кол-во проданных учебных книг: ";
-		cin >> CountEducationBooks;
+		cin >> inputUser;
+		SetEducationBooks(inputUser);
 		cout << "Введите кол-во проданных развлекательных книг: ";
-		cin >> CountEntertainingBooks;
+		cin >> inputUser;
+		SetEntertainingBooks(inputUser);
+		SetAmountBooks();
 	}
 
-	void SetValue(int artBooks, int sportBooks, int educationBooks, int entertainingBooks)
+	/*void SetValue(int artBooks, int sportBooks, int educationBooks, int entertainingBooks)
 	{
-		CountArtBooks = artBooks;
-		CountSportBooks = sportBooks;
-		CountEducationBooks = educationBooks;
-		CountEntertainingBooks = entertainingBooks;
-	}
+		ArtBooks = artBooks;
+		SportBooks = sportBooks;
+		EducationBooks = educationBooks;
+		EntertainingBooks = entertainingBooks;
+		SetAmountBooks();
+	}*/
 };
 
 Store* GenerateStores(int countSores)
@@ -63,10 +171,10 @@ Store* GenerateStores(int countSores)
 	{
 		cout << "Имя: ";
 		cin >> newStores[i].Name;
-		newStores[i].CountArtBooks = 0 + rand() % randMaxNumber;
-		newStores[i].CountSportBooks = 0 + rand() % randMaxNumber;
-		newStores[i].CountEducationBooks = 0 + rand() % randMaxNumber;
-		newStores[i].CountEntertainingBooks = 0 + rand() % randMaxNumber;
+		newStores[i].SetArtBooks(0 + rand() % randMaxNumber);
+		newStores[i].SetSportBooks(0 + rand() % randMaxNumber);
+		newStores[i].SetEducationBooks(0 + rand() % randMaxNumber);
+		newStores[i].SetEntertainingBooks(0 + rand() % randMaxNumber);
 	}
 	return newStores;
 }
@@ -87,7 +195,11 @@ void Laba1()
 	Store store;
 	store.InputFromConsole();
 	store.ShowNames();
-	store.ShowValueInfo();	
+	store.ShowValueInfo();
+	cout << "Всего продано книг: " << store.GetAmountBooks();
+	cout << "\nБольше всего продано "; 
+	store.ShowNameCategoriesByIndex(store.GetIndexMaxAmountBooks());
+	cout << '\n';
 }
 
 int main()
@@ -97,5 +209,6 @@ int main()
 	setlocale(LC_ALL, "Russian");
 	Laba1();
 	//Generator(1);
+	
 	return 0;
 }
