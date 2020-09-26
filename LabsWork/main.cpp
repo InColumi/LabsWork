@@ -111,6 +111,26 @@ struct Store
 		_categories[3] = amount;
 	}
 
+	int GetArtBooks()
+	{
+		return _categories[0];
+	}
+
+	int GetSportBooks()
+	{
+		return _categories[1];
+	}
+
+	int GetEducationBooks()
+	{
+		return _categories[2];
+	}
+
+	int GetEntertainingBooks()
+	{
+		return _categories[3];
+	}
+
 	int GetAmountBooks()
 	{
 		return _amountBooks;
@@ -154,6 +174,34 @@ struct Store
 		EntertainingBooks = entertainingBooks;
 		SetAmountBooks();
 	}*/
+	int GetValueCategotyByNumber(int number)
+	{
+		int value;
+		switch(number)
+		{
+			case 1:
+			{
+				value = GetArtBooks();
+				break;
+			}	
+			case 2:
+			{
+				value = GetSportBooks();
+				break;
+			}
+			case 3:
+			{
+				value = GetEducationBooks();
+				break;
+			}
+			case 4:
+			{
+				value = GetEntertainingBooks();
+				break;
+			}
+		}
+		return value;
+	}
 };
 
 Store* GenerateStores(int countSores)
@@ -195,14 +243,32 @@ void Initialization(Store& store)
 	store.InputFromConsole();
 }
 
-void ShowStoreToConsole(Store& store)
+void ShowStoreToConsole(Store& store, bool isShowMaxAmountBooks = true, bool isShowNamesCategort = true)
 {
-	store.ShowNames();
+	if(isShowNamesCategort)
+	{
+		store.ShowNames();
+	}
+	
 	store.ShowValueInfo();
-	cout << "Всего продано книг: " << store.GetAmountBooks();
-	cout << "\nБольше всего продано ";
-	store.ShowNameCategoriesByIndex(store.GetIndexMaxAmountBooks());
+	if(isShowMaxAmountBooks)
+	{
+		cout << "Всего продано книг: " << store.GetAmountBooks();
+		cout << "\nБольше всего продано ";
+		store.ShowNameCategoriesByIndex(store.GetIndexMaxAmountBooks());
+	}
+	
 	cout << '\n';
+}
+
+void ShowStoreInTable(Store* stores, int size)
+{
+	ShowStoreToConsole(stores[0], false);
+	for(int i = 1; i < size; i++)
+	{
+		ShowStoreToConsole(stores[i], false, false);
+	}
+	cout << "------------------------------------------------------------------------\n";
 }
 
 void Laba1()
@@ -229,7 +295,9 @@ int ReturnIndexMaxByAmount(int* arr, int size)
 
 void Laba2()
 {
-	int countStores = 2;
+	cout << "Введите кол-во магазинов: ";
+	int countStores;
+	cin >> countStores;
 	Store* stores = new Store[countStores];
 	int* amountsBooks = new int[countStores];
 	for(int i = 0; i < countStores; i++)
@@ -239,14 +307,65 @@ void Laba2()
 		cout << "------------------------------------------------------------------------\n";
 	}
 	system("cls");
-	for(int i = 0; i < countStores; i++)
-	{
-		ShowStoreToConsole(stores[i]);
-		cout << "------------------------------------------------------------------------\n";
-	}
+	ShowStoreInTable(stores, countStores);
 	int index = ReturnIndexMaxByAmount(amountsBooks, countStores);
 	cout << "Больше всего продал: \n";
 	ShowStoreToConsole(stores[index]);
+}
+
+void SortStoreByNubmerColum(Store* stores, int size, int column, bool inAscendingOrder = true)
+{
+	for(int i = 0; i < size - 1; i++)
+	{
+		for(int j = 0; j < size - i - 1; j++)
+		{
+			if(inAscendingOrder)
+			{
+				if(stores[j].GetValueCategotyByNumber(column) > stores[j + 1].GetValueCategotyByNumber(column))
+				{
+					// меняем элементы местами
+					Store tempStore = stores[j];
+					stores[j] = stores[j + 1];
+					stores[j + 1] = tempStore;
+				}
+			}
+			else
+			{
+				if(stores[j].GetValueCategotyByNumber(column) < stores[j + 1].GetValueCategotyByNumber(column))
+				{
+					// меняем элементы местами
+					Store tempStore = stores[j];
+					stores[j] = stores[j + 1];
+					stores[j + 1] = tempStore;
+				}
+			}
+		}
+	}
+}
+
+void Laba3()
+{
+	int countStores = 3;
+	Store* stores = new Store[countStores];
+
+	for(int i = 0; i < countStores; i++)
+	{
+		Initialization(stores[i]);
+		cout << "------------------------------------------------------------------------\n";
+	}
+	system("cls");
+	ShowStoreInTable(stores, countStores);
+
+	cout << "Введите номер столбца для сортировки: ";
+	int numberOfColumn;
+	cin >> numberOfColumn;
+	if(numberOfColumn < 0 || numberOfColumn > 4)
+	{
+		cout << "Вы ввели плохой номер столбца\n";
+		exit(0);
+	}
+	SortStoreByNubmerColum(stores, countStores, numberOfColumn);
+	ShowStoreInTable(stores, countStores);
 }
 
 int main()
@@ -255,7 +374,8 @@ int main()
 	system("cls");
 	setlocale(LC_ALL, "Russian");
 	//Laba1();
-	Laba2();
+	//Laba2();
+	Laba3();
 	//Generator(1);
 	
 	return 0;
