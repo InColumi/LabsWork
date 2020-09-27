@@ -4,13 +4,18 @@
 #include <ctime>
 #include <string>
 #include <windows.h>
+#include <fstream>
+
 using namespace std;
 
 struct Store
 {
 	public:
+	
 	char Name[17];
+	
 	private:
+	
 	int _countCategories = 4;
 	int _amountBooks;
 	int* _categories = new int[_countCategories];
@@ -23,8 +28,29 @@ struct Store
 			_amountBooks += _categories[i];
 		}
 	}
+		
+	void SetArtBooks(int amount)
+	{
+		_categories[0] = amount;
+	}
 
+	void SetSportBooks(int amount)
+	{
+		_categories[1] = amount;
+	}
+
+	void SetEducationBooks(int amount)
+	{
+		_categories[2] = amount;
+	}
+	
+	void SetEntertainingBooks(int amount)
+	{
+		_categories[3] = amount;
+	}
+	
 	public:
+		
 	int GetIndexMaxAmountBooks()
 	{
 		int max = _categories[0];
@@ -91,26 +117,6 @@ struct Store
 
 	}
 
-	void SetArtBooks(int amount)
-	{
-		_categories[0] = amount;
-	}
-
-	void SetSportBooks(int amount)
-	{
-		_categories[1] = amount;
-	}
-
-	void SetEducationBooks(int amount)
-	{
-		_categories[2] = amount;
-	}
-
-	void SetEntertainingBooks(int amount)
-	{
-		_categories[3] = amount;
-	}
-
 	int GetArtBooks()
 	{
 		return _categories[0];
@@ -166,14 +172,6 @@ struct Store
 		SetAmountBooks();
 	}
 
-	/*void SetValue(int artBooks, int sportBooks, int educationBooks, int entertainingBooks)
-	{
-		ArtBooks = artBooks;
-		SportBooks = sportBooks;
-		EducationBooks = educationBooks;
-		EntertainingBooks = entertainingBooks;
-		SetAmountBooks();
-	}*/
 	int GetValueCategotyByNumber(int number)
 	{
 		int value;
@@ -203,40 +201,6 @@ struct Store
 		return value;
 	}
 };
-
-Store* GenerateStores(int countSores)
-{
-	char* names = *new char[6][12]{ 
-		"Свобода", 
-		"Надежда", 
-		"Улыбка", 
-		"Свобода",
-		"Радуга", 
-		"Закат" };
-	int randMaxNumber = 10;
-	Store* newStores = new Store[countSores];
-	for(int i = 0; i < countSores; i++)
-	{
-		cout << "Имя: ";
-		cin >> newStores[i].Name;
-		newStores[i].SetArtBooks(0 + rand() % randMaxNumber);
-		newStores[i].SetSportBooks(0 + rand() % randMaxNumber);
-		newStores[i].SetEducationBooks(0 + rand() % randMaxNumber);
-		newStores[i].SetEntertainingBooks(0 + rand() % randMaxNumber);
-	}
-	return newStores;
-}
-
-void Generator(int countStores)
-{
-	srand(time(0));
-	Store* stores = GenerateStores(countStores);
-	stores[0].ShowNames();
-	for(size_t i = 0; i < countStores; i++)
-	{
-		stores[i].ShowValueInfo();
-	}
-}
 
 void Initialization(Store& store)
 {
@@ -370,6 +334,85 @@ void Laba3()
 	ShowStoreInTable(stores, countStores);
 }
 
+void SaveToFile(Store* stores, int size, string fileName)
+{
+	ofstream out;
+	out.open(fileName);
+	if(out.is_open() == false)
+	{
+		cout << "Файл не найден!";
+		exit(0);
+	}
+
+	for(int i = 0; i < size; i++)
+	{
+		out << stores[i].Name << " ";
+		out << stores[i].GetArtBooks() << " ";
+		out << stores[i].GetSportBooks() << " ";
+		out << stores[i].GetEducationBooks() << " ";
+		out << stores[i].GetEntertainingBooks() << "\n";
+	}
+	out.close();
+}
+
+void CommandHandler(bool &isNextCommand, Store* stores = NULL, int countStores = 0)
+{
+	bool isCorrectCommand = false;
+	while(isCorrectCommand == false)
+	{
+		if(stores)
+		{
+			cout << "Введите T, если хотите сохранить в текстовый файл.\n";
+			cout << "Введите B, если хотите сохранить в бинарный файл.\n";
+		}
+		cout << "Введите Y, если хотите продолжыть.\n";
+		cout << "Введите N, если хотите выйти из програмы.\n";
+		char command;
+		cin >> command;
+
+		switch(command)
+		{
+			case 'Y':
+			{
+				isCorrectCommand = true;
+				system("cls");
+				break;
+			}
+			case 'T':
+			{
+				if(stores)
+				{
+					string fileName = "fileInfo.txt";
+					SaveToFile(stores, countStores, fileName);
+					cout << "Текстовый файл записан имя - " << fileName << "\n\n";
+				}
+				break;
+			}
+			case 'B':
+			{
+				if(stores)
+				{
+					string fileName = "fileInfoB.txt";
+					SaveToFile(stores, countStores, fileName);
+					cout << "Бинарный файл записан имя - " << fileName << "\n";
+				}
+				
+				break;
+			}
+			case 'N':
+			{
+				cout << "Программа завершена пользователем\n";
+				isCorrectCommand = true;
+				isNextCommand = false;
+				break;
+			}
+			default:
+				cout << "Я не знаю такой команды, попробуйте еще.";
+				break;
+		}
+	}
+}
+
 void Laba4()
 {
 	cout << "Введите кол-во магазинов: ";
@@ -399,34 +442,57 @@ void Laba4()
 		SortStoreByNubmerColum(stores, countStores, numberOfColumn);
 		system("cls");
 		ShowStoreInTable(stores, countStores);
-		bool isCorrectCommand = false;
-		while(isCorrectCommand == false)
-		{
-			cout << "Введите Y, если хотите продолжыть.\n";
-			cout << "Введите N, если хотите выйти из програмы.\n";
-			char command;
-			cin >> command;
+		CommandHandler(isNextCommand);
+	}
+}
 
-			switch(command)
-			{
-				case 'Y':
-				{
-					isCorrectCommand = true;
-					system("cls");
-					break;
-				}
-				case 'N':
-				{
-					cout << "Программа завершена пользователем\n";
-					isCorrectCommand = true;
-					isNextCommand = false;
-					break;
-				}
-				default:
-					cout << "Я не знаю такой команды, попробуйте еще.";
-					break;
-			}
+void ReadFromFile()
+{
+	string line;
+	ifstream in("fileInfo.txt");
+	if(in.is_open() == false)
+	{
+		cout << "Файл не найден!";
+		exit(0);
+	}
+	int countStores = 0;
+	while(getline(in, line))
+	{
+		cout << line << endl;
+	}
+}
+
+
+void Laba5()
+{
+	cout << "Введите кол-во магазинов: ";
+	int countStores = 1;
+	cin >> countStores;
+	Store* stores = new Store[countStores];
+
+	for(int i = 0; i < countStores; i++)
+	{
+		Initialization(stores[i]);
+		cout << "------------------------------------------------------------------------\n";
+	}
+	system("cls");
+	ShowStoreInTable(stores, countStores);
+
+	bool isNextCommand = true;
+	while(isNextCommand)
+	{
+		cout << "Введите номер столбца для сортировки: ";
+		int numberOfColumn;
+		cin >> numberOfColumn;
+		if(numberOfColumn < 0 || numberOfColumn > 4)
+		{
+			cout << "Вы ввели плохой номер столбца\n";
+			exit(0);
 		}
+		SortStoreByNubmerColum(stores, countStores, numberOfColumn);
+		system("cls");
+		ShowStoreInTable(stores, countStores);
+		CommandHandler(isNextCommand, stores, countStores);
 	}
 }
 
@@ -438,8 +504,7 @@ int main()
 	//Laba1();
 	//Laba2();
 	//Laba3();
-	Laba4();
-	//Generator(1);
-	
+	//Laba4();
+	Laba5();
 	return 0;
 }
